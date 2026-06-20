@@ -1,0 +1,107 @@
+-- XIOYARA AI Extra Fast Catch + Spam Notif | Diamond Rod
+local OrionLib = loadstring(game:HttpGet('https://raw.githubusercontent.com/shlexware/Orion/main/source'))()
+
+local Window = OrionLib:MakeWindow({
+    Name = "⚡ XIOYARA • Extra Fast Catch",
+    IntroText = "WELLCOME NEWBIE",
+    IntroIcon = "rbxassetid://76841668735667",
+    Icon = "rbxassetid://76841668735667"
+})
+
+local MainTab = Window:MakeTab({Name = "⚡ Fast Catch Core", Icon = "rbxassetid://76841668735667"})
+
+local player = game.Players.LocalPlayer
+local States = {AutoCatch = false, NoVisual = true, AntiAFK = true}
+
+OrionLib:MakeNotification({
+    Name = "XIOYARA AI",
+    Content = "Extra Fast Catch + Banyak Notif Activated",
+    Image = "rbxassetid://76841668735667",
+    Time = 8
+})
+
+spawn(function()
+    while task.wait(1.5) do
+        pcall(function()
+            for _, tool in ipairs(player.Backpack:GetChildren()) do
+                if tool.Name:lower():find("diamond") then
+                    player.Character.Humanoid:EquipTool(tool)
+                end
+            end
+        end)
+    end
+end)
+
+MainTab:AddToggle({
+    Name = "⚡ EXTRA FAST CATCH (Spam Notif)",
+    Default = false,
+    Callback = function(Value)
+        States.AutoCatch = Value
+        while States.AutoCatch do
+            task.wait(0.018)
+            pcall(function()
+                local reps = game:GetService("ReplicatedStorage")
+                for _, obj in ipairs(reps:GetDescendants()) do
+                    if obj:IsA("RemoteEvent") then
+                        local n = obj.Name:lower()
+                        if n:find("catch") or n:find("reel") or n:find("fish") or n:find("reward") or n:find("complete") then
+                            for i = 1, 5 do
+                                obj:FireServer()
+                            end
+                        end
+                    end
+                end
+            end)
+        end
+    end
+})
+
+MainTab:AddToggle({
+    Name = "🌫️ No Visual Mode",
+    Default = true,
+    Callback = function(Value)
+        States.NoVisual = Value
+        while States.NoVisual do
+            task.wait(0.2)
+            pcall(function()
+                local gui = player:FindFirstChild("PlayerGui")
+                if gui then
+                    for _, v in pairs(gui:GetDescendants()) do
+                        if v.Name:lower():find("shake") or v.Name:lower():find("minigame") or v:IsA("ParticleEmitter") then
+                            v:Destroy()
+                        end
+                    end
+                end
+            end)
+        end
+    end
+})
+
+MainTab:AddSlider({
+    Name = "⛵ Boat Speed", Min = 1, Max = 150, Default = 25,
+    Callback = function(v)
+        pcall(function()
+            local hum = player.Character:FindFirstChild("Humanoid")
+            if hum then hum.WalkSpeed = 16 * v end
+        end)
+    end
+})
+
+MainTab:AddButton({Name = "📍 TP Best Spot", Callback = function()
+    pcall(function()
+        local root = player.Character:FindFirstChild("HumanoidRootPart")
+        if root then root.CFrame = CFrame.new(150, 50, -300) end
+    end)
+end})
+
+spawn(function()
+    while task.wait(20) do
+        if States.AntiAFK then
+            game:GetService("VirtualUser"):Button2Down(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+            task.wait(0.1)
+            game:GetService("VirtualUser"):Button2Up(Vector2.new(0,0), workspace.CurrentCamera.CFrame)
+        end
+    end
+end)
+
+OrionLib:Init()
